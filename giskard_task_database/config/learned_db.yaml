@@ -1,0 +1,4 @@
+pouring:
+  bottle:
+    cup: config/pouring_bottle_cup.pkl
+
