@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <package format="2">
   <name>giskard_task_database</name>
-  <version>0.0.0</version>
+  <version>0.0.1</version>
   <description>
     A database which can be queried for task-specific goal constraints
     for giskard controllers.
