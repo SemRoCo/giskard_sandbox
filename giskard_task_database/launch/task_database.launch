@@ -1,8 +1,10 @@
 <launch>
 
+  <arg name="dummy_mode" default="true"/>
+
   <node pkg="giskard_task_database" type="task_database.py" name="task_database"
         output="screen" >
-    <param name="dummy_mode" value="true" />
+    <param name="dummy_mode" value="$(arg dummy_mode)" />
   </node>
 
 </launch>
