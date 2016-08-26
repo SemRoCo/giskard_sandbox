@@ -1,0 +1,19 @@
+<?xml version="1.0"?>
+<package format="2">
+  <name>giskard_task_database</name>
+  <version>0.0.0</version>
+  <description>
+    A database which can be queried for task-specific goal constraints
+    for giskard controllers.
+  </description>
+
+  <maintainer email="georg.bartels@cs.uni-bremen.de">Georg Bartels</maintainer>
+  <author email="georg.bartels@cs.uni-bremen.de">Georg Bartels</author>
+
+  <license>BSD</license>
+
+  <buildtool_depend>catkin</buildtool_depend>
+  <depend>rospy</depend>
+  <depend>giskard_msgs</depend>
+
+</package>

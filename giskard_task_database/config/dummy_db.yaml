@@ -1,0 +1,63 @@
+pouring:
+  bottle:
+    cup:
+      - name: move_above
+        constraints:
+          - name: source_top_above_goal_target_top
+            lower: 0.08
+            upper: 0.12
+          - name: source_top_left_goal_target_top
+            lower: -0.06
+            upper: -0.04
+          - name: source_top_behind_goal_target_top
+            lower: -0.01
+            upper: 0.01
+          - name: source_above_itself
+            lower: 0.1
+            upper: 0.12
+          - name: source_left_itself
+            lower: 0.1
+            upper: 0.12
+          - name: source_behind_itself
+            lower: -0.01
+            upper: 0.01
+      - name: tilt_down
+        constraints:
+          - name: source_top_above_goal_target_top
+            lower: 0.06
+            upper: 0.12
+          - name: source_top_left_goal_target_top
+            lower: -0.03
+            upper: -0.02
+          - name: source_top_behind_goal_target_top
+            lower: -0.005
+            upper: 0.005
+          - name: source_above_itself
+            lower: -0.06
+            upper: -0.03
+          - name: source_left_itself
+            lower: 0.16
+            upper: 0.2
+          - name: source_behind_itself
+            lower: -0.01
+            upper: 0.01
+      - name: tilt_back
+        constraints:
+          - name: source_top_above_goal_target_top
+            lower: -0.1
+            upper: 0.1
+          - name: source_top_left_goal_target_top
+            lower: -0.4
+            upper: -0.1
+          - name: source_top_behind_goal_target_top
+            lower: -0.1
+            upper: 0.1
+          - name: source_above_itself
+            lower: 0.18
+            upper: 0.2
+          - name: source_left_itself
+            lower: -0.005
+            upper: 0.005
+          - name: source_behind_itself
+            lower: -0.005
+            upper: 0.005

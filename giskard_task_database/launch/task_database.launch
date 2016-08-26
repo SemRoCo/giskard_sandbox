@@ -1,0 +1,8 @@
+<launch>
+
+  <node pkg="giskard_task_database" type="task_database.py" name="task_database"
+        output="screen" >
+    <param name="dummy_mode" value="true" />
+  </node>
+
+</launch>
