@@ -136,7 +136,6 @@ def query_amodel(action_learner, rel_pose, pour_vol, fill_vol):
                 constraint_name = action_learner.actionmodel.dependent_names[phase][iy]
                 irange = [pred_range[0][ix][iy], pred_range[1][ix][iy]]
                 constraints[phase][constraint_name] = irange      
-    # TODO: Yuen please implement me, and replace the return statement below
     return constraints
 
 def dummy_phases_to_ros(phases):
