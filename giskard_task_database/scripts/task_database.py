@@ -32,6 +32,8 @@ import cPickle as pickle
 import PyKDL as kdl
 from giskard_msgs.srv import *
 from giskard_msgs.msg import *
+import learning_clean
+
 
 dummy_mode = False
 dummy_db = {}
@@ -86,6 +88,11 @@ def read_pickle_file(postfix):
 
 def unpickle_file(postfix):
     rospy.loginfo("opening file '%s'", postfix)
+    pklfile = get_ros_package_path() + postfix
+    with open(pklfile, 'rb') as infile:
+        unpickled_obj = pickle.load(infile)
+        return unpickled_obj
+
 
 def read_dummy_db():
     global dummy_db
@@ -113,10 +120,24 @@ def get_source_object(objs):
 def get_target_object(objs):
     return get_object_by_role(objs, giskard_msgs.msg.TaskObject.TARGET_ROLE)
 
-def query_amodel(amodel, rel_pose, pour_vol, fill_vol):
+def query_amodel(action_learner, rel_pose, pour_vol, fill_vol):
     rospy.loginfo("rel_pose: %s, pour_vol: %s, fill_vol: %s", rel_pose, pour_vol, fill_vol)
+    constraints = {}
+    evaluation_model = action_learner.evaluationmodel
+    new_input = {"total_filled_volume": fill_vol, "ontargetm3": pour_vol, "x_relative": rel_pose[0], "y_relative":rel_pose[1], "z_relative": rel_pose[0]}
+    FITTHRESHOLD = 0.3
+    pred_ranges = action_learner.estimate_constraint_range(evaluation_model, new_input, FITTHRESHOLD, plotreplacement=False, verbose=False)
+    #unpack and organize pred_ranges into constraints
+    for phase in action_learner.all_datanames:
+        constraints[phase]={}
+        pred_range = pred_ranges[phase]
+        for ix in range(0,len(pred_range[0])): #For now len will always be 1; in principle we could predict the values for multiple x's (e.g. multiple observations) at the same time, but that code was not tested
+            for iy in xrange(len(action_learner.actionmodel.dependent_names[phase])): #multi-output possible, so iy might be more than 1
+                constraint_name = action_learner.actionmodel.dependent_names[phase][iy]
+                irange = [pred_range[0][ix][iy], pred_range[1][ix][iy]]
+                constraints[phase][constraint_name] = irange      
     # TODO: Yuen please implement me, and replace the return statement below
-    return dummy_learned_phases()
+    return constraints
 
 def dummy_phases_to_ros(phases):
     result = []
@@ -134,11 +155,12 @@ def learned_phases_to_ros(phases):
         mp = MotionPhase()
         mp.name = name_dict[phase]
         for constraint in phases[phase]:
-            c = Constraint()
-            c.name = name_dict[constraint]
-            c.lower = phases[phase][constraint][0]
-            c.upper = phases[phase][constraint][1]
-            mp.constraints.append(c)
+            if constraint in name_dict: #we're not per se using all the constraints that are being computed (like velocity and mug-bottom-behind-maker etc)
+                c = Constraint()
+                c.name = name_dict[constraint]
+                c.lower = phases[phase][constraint][0]
+                c.upper = phases[phase][constraint][1]
+                mp.constraints.append(c)
         result.append(mp)
     return result
 
