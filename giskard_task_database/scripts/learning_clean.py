@@ -1,8 +1,11 @@
+"""Contains classes for learning from recordings in mongodb
+
+Shortened version for giskard
+"""
+
 import numpy as np
-import myutil
+import myutil_clean
 import matplotlib.pyplot as plt
-##For visualizing trees:
-from sklearn.externals.six import StringIO
 ################################
 from sklearn import linear_model
 from sklearn import metrics
@@ -183,13 +186,13 @@ class ActionLearner:
             if key=='phases':
                 for phase in data[key]: #each phase contains for all parameters a list of values that were extracted from the demonstrations
                     for param in data[key][phase]:
-                        if all(myutil.convertableToFloat(i) for i in data[key][phase][param]): #if all the data for this variable are valid floats (because we cannot calculate with other types of columns for now)
+                        if all(myutil_clean.convertableToFloat(i) for i in data[key][phase][param]): #if all the data for this variable are valid floats (because we cannot calculate with other types of columns for now)
                             alldata_dict[phase].append(np.array(data[key][phase][param], dtype=float))
 #                             print phase + "-" + param + " was " + str(len(data[key][phase][param]))
                             alldata_names[phase].append(param)
                         else:
                             print "Tried to use " + param + " but not all inputs were floats"
-            elif all(myutil.convertableToFloat(i) for i in data[key]): #all other usable data will be copied into the phase data
+            elif all(myutil_clean.convertableToFloat(i) for i in data[key]): #all other usable data will be copied into the phase data
                 for phase in phase_names:
                     alldata_dict[phase].append(np.array(data[key], dtype=float))
 #                     print key + " was " + str(len(data[key]))
@@ -496,7 +499,7 @@ class ActionModel:
         
         #Evaluation of model on trainset
         trainr2 = learned_model['model'].score(x, y)
-        trainr2_adj = myutil.adjustedRS(trainr2, y.shape[0], x.shape[1])
+        trainr2_adj = myutil_clean.adjustedRS(trainr2, y.shape[0], x.shape[1])
         
         #Evaluation of model on testset
         ##Prepare testdata
@@ -507,7 +510,7 @@ class ActionModel:
             
             ##Testset
             testr2 = lmodel.score(test_x, test_y)
-            testr2_adj = myutil.adjustedRS(testr2, test_y.shape[0], test_x.shape[1])
+            testr2_adj = myutil_clean.adjustedRS(testr2, test_y.shape[0], test_x.shape[1])
         else:
             print "No testset was given for evaluation"
          
@@ -519,13 +522,13 @@ class ActionModel:
         
         ###train scores
         trainr2_sep = dict(zip(y_colnames, traindata_scores))
-        adjusted_traindata_scores = [myutil.adjustedRS(score, y.shape[0], x.shape[1]) for score in traindata_scores]
+        adjusted_traindata_scores = [myutil_clean.adjustedRS(score, y.shape[0], x.shape[1]) for score in traindata_scores]
         trainr2_adj_sep = dict(zip(y_colnames, adjusted_traindata_scores))
         
         if self.modeltype=='rforestreg':
             oob_y = lmodel.oob_prediction_
             traindata_scores_oob = [r2_score(y[:,icol], oob_y[:,icol]) for icol in xrange(y.shape[1])] 
-            adjusted_traindata_scores_oob = [myutil.adjustedRS(score, y.shape[0], x.shape[1]) for score in traindata_scores_oob]
+            adjusted_traindata_scores_oob = [myutil_clean.adjustedRS(score, y.shape[0], x.shape[1]) for score in traindata_scores_oob]
             trainr2_adj_sep_oob = dict(zip(y_colnames, adjusted_traindata_scores_oob))
             if printsome:
                 print 'OOB train R2adj sep: ' + str(trainr2_adj_sep_oob)
@@ -534,7 +537,7 @@ class ActionModel:
         if not test_xdata.size==0:
             testdata_scores = [r2_score(test_y[:,icol], y_real_pred[:,icol]) for icol in xrange(test_y.shape[1])]
             testr2_sep = dict(zip(y_colnames, testdata_scores))
-            adjusted_testdata_scores = [myutil.adjustedRS(score, test_y.shape[0], test_x.shape[1]) for score in testdata_scores]
+            adjusted_testdata_scores = [myutil_clean.adjustedRS(score, test_y.shape[0], test_x.shape[1]) for score in testdata_scores]
             testr2_adj_sep = dict(zip(y_colnames, adjusted_testdata_scores))
             testscores = {'r2':testr2, 'r2_adj':testr2_adj, 'r2_sep':testr2_sep, 'r2_adj_sep':testr2_adj_sep}
             if printsome or printall:
@@ -548,7 +551,7 @@ class ActionModel:
         
         #Evaluate estimator performance using cross-validation
         cvr2_train = cross_validation.cross_val_score(lmodel, x, y, cv=self.CV_FOLDS, scoring='r2')
-        cvr2_adj_train = np.array([myutil.adjustedRS(score ,y.shape[0], x.shape[1]) for score in cvr2_train ])
+        cvr2_adj_train = np.array([myutil_clean.adjustedRS(score ,y.shape[0], x.shape[1]) for score in cvr2_train ])
         #Estimator performance using cross-validation per column
         separate_scores = []
         avg_scores = []
@@ -559,7 +562,7 @@ class ActionModel:
             separate_scores.append(score)
             avg_scores.append(avg)
         cvr2_train_sep = dict(zip(y_colnames, avg_scores))
-        adjusted_avg_scores = np.array([myutil.adjustedRS(score, y.shape[0], x.shape[1]) for score in avg_scores])
+        adjusted_avg_scores = np.array([myutil_clean.adjustedRS(score, y.shape[0], x.shape[1]) for score in avg_scores])
         cvr2_adj_train_sep = dict(zip(y_colnames, adjusted_avg_scores))
         #Put all the values together in dictionaries
         trainscores = {'oob_r2adj':trainr2_adj_sep_oob, 'r2':trainr2, 'r2_adj':trainr2_adj, 'r2_sep':trainr2_sep, 'r2_adj_sep':trainr2_adj_sep}
