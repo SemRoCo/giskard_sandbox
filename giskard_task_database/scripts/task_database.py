@@ -39,15 +39,15 @@ dummy_mode = False
 dummy_db = {}
 learned_db = {}
 name_dict = {
-        'moveabovepan': 'move_above',
+        'moveabovepan': 'approach',
         'tiltbottle': 'tilt_down',
         'tiltback' : 'tilt_back',
-        'mug-top-behind-maker': 'source_top_behind_goal_target_top',
-        'mug-top-left-maker': 'source_top_left_goal_target_top',
-        'mug-top-above-maker': 'source_top_above_goal_target_top',
-        'mug-behind-itself': 'source_behind_itself',
-        'mug-left-itself': 'source_left_itself',
-        'mug-above-itself': 'source_above_itself'}
+        'mug-top-behind-maker': 'source_top_behind_target_top',
+        'mug-top-left-maker': 'source_top_left_target_top',
+        'mug-top-above-maker': 'source_top_above_target_top',
+        'mug-behind-itself': 'source_top_behind_source_bottom',
+        'mug-left-itself': 'source_top_left_source_bottom',
+        'mug-above-itself': 'source_top_above_source_bottom'}
 
 def dummy_learned_phases():
     result = {}
