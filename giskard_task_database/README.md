@@ -1,5 +1,8 @@
 # giskard_task_database
 
+## Dependencies
+Clone git@github.com:SemRoCo/giskard_msgs.git into your catkin workspace.
+
 ## Configure the database with new task models
 Copy the new pickle-file in the subdirectory ```config```, and it a corresponding entry to the file ```learned_db.yaml```.
 
